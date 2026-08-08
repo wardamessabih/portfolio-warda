@@ -778,6 +778,15 @@
       .project-card:hover .project-image video {
         transform: scale(1.05);
       }
+      .project-image .web-shot {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s;
+      }
+      .project-card:hover .project-image .web-shot {
+        transform: scale(1.05);
+      }
 
       .video-intro {
         position: absolute;
@@ -1460,6 +1469,228 @@
         width: 18px;
         height: 18px;
       }
+
+      /* ---------- Vertical Video Carousel ---------- */
+      .vv-carousel {
+        --vv-card-w: 62%;
+        position: relative;
+        max-width: 1080px;
+        margin: 0 auto;
+        padding-top: 12px;
+      }
+      @media (min-width: 600px) {
+        .vv-carousel {
+          --vv-card-w: 46%;
+        }
+      }
+      @media (min-width: 900px) {
+        .vv-carousel {
+          --vv-card-w: 34%;
+        }
+      }
+      @media (min-width: 1200px) {
+        .vv-carousel {
+          --vv-card-w: 31%;
+        }
+      }
+
+      .vv-viewport {
+        position: relative;
+        overflow: hidden;
+        padding: 28px 0 36px;
+        touch-action: pan-y;
+        cursor: grab;
+        border-radius: var(--radius-lg);
+        -webkit-user-select: none;
+        user-select: none;
+      }
+      .vv-viewport.dragging {
+        cursor: grabbing;
+      }
+      .vv-viewport::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 64%;
+        height: 90%;
+        transform: translate(-50%, -50%);
+        background: radial-gradient(
+          ellipse at center,
+          rgba(236, 72, 153, 0.1),
+          transparent 70%
+        );
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .vv-track {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        gap: 24px;
+        will-change: transform;
+        transform: translate3d(var(--vv-offset, 0px), 0, 0);
+        transition: transform 0.55s var(--ease);
+      }
+
+      .vv-card {
+        position: relative;
+        flex: 0 0 var(--vv-card-w);
+        aspect-ratio: 9 / 16;
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        border: 1px solid var(--border-strong);
+        background: var(--surface);
+        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
+        --vv-s: 0.92;
+        --vv-o: 0.72;
+        transform: scale(var(--vv-s));
+        opacity: var(--vv-o);
+        transition:
+          transform 0.55s var(--ease),
+          opacity 0.55s var(--ease),
+          border-color 0.55s var(--ease),
+          box-shadow 0.55s var(--ease);
+      }
+      .vv-card:not(.is-active):hover {
+        --vv-s: 0.96;
+      }
+      .vv-card.is-active {
+        --vv-s: 1;
+        --vv-o: 1;
+        border-color: rgba(236, 72, 153, 0.45);
+        box-shadow:
+          0 30px 80px rgba(236, 72, 153, 0.22),
+          0 24px 60px rgba(0, 0, 0, 0.55);
+      }
+      .vv-card[data-dist="2"] {
+        --vv-o: 0.55;
+      }
+      .vv-card[data-dist="3"],
+      .vv-card[data-dist="4"] {
+        --vv-o: 0.45;
+      }
+      .vv-card video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        cursor: pointer;
+      }
+
+      .vv-play {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+        transition: opacity 0.4s var(--ease);
+      }
+      .vv-play span {
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+        background: rgba(17, 17, 19, 0.62);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+        transition:
+          transform 0.4s var(--ease),
+          background 0.4s var(--ease);
+      }
+      .vv-play svg {
+        width: 18px;
+        height: 18px;
+        fill: #fff;
+        margin-left: 3px;
+      }
+      .vv-card:not(.is-active) .vv-play,
+      .vv-card.is-playing .vv-play {
+        opacity: 0;
+      }
+      .vv-card.is-active:not(.is-playing) .vv-play span {
+        animation: vvPulse 2.4s ease-in-out infinite;
+      }
+      @keyframes vvPulse {
+        0%,
+        100% {
+          box-shadow:
+            0 0 0 0 rgba(236, 72, 153, 0.35),
+            0 12px 32px rgba(0, 0, 0, 0.45);
+        }
+        50% {
+          box-shadow:
+            0 0 0 12px rgba(236, 72, 153, 0),
+            0 12px 32px rgba(0, 0, 0, 0.45);
+        }
+      }
+
+      .vv-label {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 2;
+        padding: 34px 16px 14px;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        color: var(--text);
+        background: linear-gradient(
+          to top,
+          rgba(0, 0, 0, 0.78),
+          rgba(0, 0, 0, 0) 70%
+        );
+        pointer-events: none;
+      }
+
+      .vv-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 5;
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        background: rgba(17, 17, 19, 0.82);
+        border: 1px solid var(--border-strong);
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+        transition: all 0.3s var(--ease);
+      }
+      .vv-nav:hover {
+        border-color: var(--accent);
+        background: rgba(236, 72, 153, 0.18);
+        transform: translateY(-50%) scale(1.06);
+      }
+      .vv-nav svg {
+        width: 18px;
+        height: 18px;
+      }
+      .vv-prev {
+        left: 4px;
+      }
+      .vv-next {
+        right: 4px;
+      }
+      @media (max-width: 767px) {
+        .vv-nav {
+          display: none;
+        }
+      }
     </style>
   </head>
   <body>
@@ -1733,20 +1964,101 @@
 
       <section class="section-pad" id="portfolio">
         <div class="container">
-          <span class="eyebrow reveal">Portfolio</span>
-          <h2 class="section-title reveal">Mon travail</h2>
+          <span class="eyebrow reveal">Web Projects</span>
+          <h2 class="section-title reveal">Web Projects</h2>
           <p class="section-sub reveal">
-            Photos et videos recentes depuis mon dossier de travail.
+            Sites web et applications développés pour des entreprises et des
+            centres de formation.
           </p>
 
-          <div class="filter-bar reveal">
-            <button class="filter-btn active" data-filter="all">All</button>
-            <button class="filter-btn" data-filter="video">
-              Videos
-            </button>
-          </div>
+          <div class="portfolio-grid">
+            <div class="project-card reveal" data-category="web">
+              <div class="project-image" style="background: #111113;">
+                <img
+                  class="web-shot"
+                  src="images/gestion-archives.jpg"
+                  alt="Gestion des Archives - Direction de la Culture et des Arts d'Oran"
+                />
+                <span class="badge">Web App</span>
+              </div>
+              <div class="project-body">
+                <h3>
+                  Gestion des Archives — Direction de la Culture et des Arts
+                  d'Oran
+                </h3>
+                <p>
+                  Application web de gestion et d'organisation des archives
+                  développée pour la Direction de la Culture et des Arts de la
+                  Wilaya d'Oran. Le projet permet de structurer et faciliter la
+                  gestion des documents et des archives au sein de
+                  l'établissement.
+                </p>
+                <div class="tech-row">
+                  <span class="tech-pill">Laravel</span>
+                  <span class="tech-pill">PHP</span>
+                  <span class="tech-pill">MySQL</span>
+                  <span class="tech-pill">Bootstrap</span>
+                  <span class="tech-pill">HTML</span>
+                  <span class="tech-pill">CSS</span>
+                  <span class="tech-pill">JavaScript</span>
+                </div>
+                <a
+                  href="https://wardamessabih.github.io/gestionArchive/"
+                  class="view-project"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >View Project</a
+                >
+              </div>
+            </div>
 
-          <div class="portfolio-grid" id="portfolio-grid">
+            <div class="project-card reveal" data-category="web">
+              <div class="project-image" style="background: #111113;">
+                <img
+                  class="web-shot"
+                  src="images/i-m-school.jpg"
+                  alt="I.M School - Online Registration Form"
+                />
+                <span class="badge">Web Form</span>
+              </div>
+              <div class="project-body">
+                <h3>I.M School — Online Registration Form</h3>
+                <p>
+                  Formulaire d'inscription en ligne pour une école de cours
+                  particuliers permettant aux candidats de renseigner leurs
+                  informations et de transmettre automatiquement les données
+                  vers un tableau Google Sheets pour faciliter la gestion des
+                  inscriptions.
+                </p>
+                <div class="tech-row">
+                  <span class="tech-pill">HTML</span>
+                  <span class="tech-pill">CSS</span>
+                  <span class="tech-pill">JavaScript</span>
+                  <span class="tech-pill">Google Sheets</span>
+                  <span class="tech-pill">Google Apps Script</span>
+                </div>
+                <a
+                  href="https://wardamessabih.github.io/i-m-school/"
+                  class="view-project"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >View Project</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-pad" id="video-projects">
+        <div class="container">
+          <span class="eyebrow reveal">Video Projects</span>
+          <h2 class="section-title reveal">Video Projects</h2>
+          <p class="section-sub reveal">
+            Vidéos promotionnelles — tournage et montage.
+          </p>
+
+          <div class="portfolio-grid">
             <div class="project-card reveal" data-category="video">
               <div class="project-image" style="background: #111113;">
                 <div class="video-intro" data-video-src="images/Olympique.mp4">
@@ -1886,9 +2198,73 @@
               </div>
             </div>
 
+            <div class="project-card reveal" data-category="video">
+              <div class="project-image" style="background: #111113;">
+                <div class="video-intro" data-video-src="images/formation professionelle.mp4">
+                  <img src="images/formation professionelle.jpg" alt="Promotion des inscriptions - Formation Professionnelle 2026" />
+                  <div class="play-icon"><svg viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div>
+                </div>
+                <video controls preload="metadata" playsinline>
+                  <source src="images/formation professionelle.mp4" type="video/mp4" />
+                </video>
+                <span class="badge">Video</span>
+              </div>
+              <div class="project-body">
+                <h3>
+                  Promotion des inscriptions — Formation Professionnelle 2026
+                </h3>
+                <p>
+                  Vidéo promotionnelle réalisée à l'occasion du lancement des
+                  inscriptions pour la session 2026 de la formation
+                  professionnelle.
+                </p>
+                <div class="tech-row">
+                  <span class="tech-pill">Videography</span>
+                  <span class="tech-pill">Video Editing</span>
+                </div>
+              </div>
+            </div>
+
 
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-pad" id="vertical-videos">
+        <div class="container">
+          <span class="eyebrow reveal">Vertical Videos</span>
+          <h2 class="section-title reveal">Vertical Promotional Videos</h2>
+          <p class="section-sub reveal">
+            Short-form vertical promos in their original 9:16 format. Swipe or
+            use the arrows to browse — click a video to play or pause it.
+          </p>
+
+          <div class="vv-carousel reveal" id="vv-section">
+            <div class="vv-viewport" id="vv-viewport">
+              <div class="vv-track" id="vv-track"></div>
+            </div>
+            <button class="vv-nav vv-prev" aria-label="Previous video">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+              >
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </button>
+            <button class="vv-nav vv-next" aria-label="Next video">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+              >
+                <path d="M9 6l6 6-6 6" />
+              </svg>
+            </button>
           </div>
         </div>
       </section>
@@ -2772,6 +3148,197 @@
             }, 650);
           });
         });
+
+        // Vertical video carousel
+        // Add or remove files here to update the "images/carousel video" list.
+        (function () {
+          var section = document.getElementById("vv-section");
+          if (!section) return;
+          var track = document.getElementById("vv-track");
+          var viewport = document.getElementById("vv-viewport");
+          var prevBtn = section.querySelector(".vv-prev");
+          var nextBtn = section.querySelector(".vv-next");
+
+          var VIDEOS = [
+            { src: "images/carousel video/prof .MP4", title: "Professional Promo" },
+            { src: "images/carousel video/school .MP4", title: "School Promo" },
+          ];
+
+          var cards = [];
+          var active = 0;
+          var dragging = false;
+          var moved = false;
+          var startX = 0;
+          var startY = 0;
+          var baseOffset = 0;
+          var gap = 24;
+
+          VIDEOS.forEach(function (video, i) {
+            var card = document.createElement("div");
+            card.className = "vv-card";
+            card.setAttribute("data-index", i);
+            card.setAttribute("data-dist", i === 0 ? 0 : 1);
+            card.setAttribute("role", "button");
+            card.setAttribute("tabindex", "0");
+            card.setAttribute("aria-label", video.title);
+            card.innerHTML =
+              "<video playsinline preload='none' data-src='" +
+              video.src +
+              "'></video>" +
+              "<div class='vv-play'><span><svg viewBox='0 0 24 24'><polygon points='7,4 20,12 7,20'/></svg></span></div>" +
+              "<span class='vv-label'>" + video.title + "</span>";
+            track.appendChild(card);
+            cards.push(card);
+          });
+
+          function cardWidth() {
+            return cards[0] ? cards[0].getBoundingClientRect().width : 300;
+          }
+
+          function offsetFor(i) {
+            var vw = viewport.clientWidth;
+            var w = cardWidth();
+            return vw / 2 - w / 2 - i * (w + gap);
+          }
+
+          function layout() {
+            track.style.setProperty("--vv-offset", offsetFor(active) + "px");
+            cards.forEach(function (card, i) {
+              var d = Math.abs(i - active);
+              card.classList.toggle("is-active", d === 0);
+              card.setAttribute("data-dist", d);
+            });
+          }
+
+          function videoEl(card) {
+            return card.querySelector("video");
+          }
+
+          function loadNearby() {
+            cards.forEach(function (card, i) {
+              var v = videoEl(card);
+              if (Math.abs(i - active) <= 1) {
+                if (!v.getAttribute("src")) {
+                  v.setAttribute("src", v.getAttribute("data-src"));
+                  v.load();
+                }
+              } else if (v.getAttribute("src")) {
+                v.pause();
+                card.classList.remove("is-playing");
+                v.removeAttribute("src");
+                v.load();
+              }
+            });
+          }
+
+          function goTo(i) {
+            active = Math.max(0, Math.min(VIDEOS.length - 1, i));
+            layout();
+            loadNearby();
+          }
+
+          function togglePlay(card) {
+            var v = videoEl(card);
+            if (!v.getAttribute("src")) {
+              v.setAttribute("src", v.getAttribute("data-src"));
+              v.load();
+            }
+            if (v.paused) {
+              v.play()
+                .then(function () {
+                  card.classList.add("is-playing");
+                })
+                .catch(function () {});
+            } else {
+              v.pause();
+              card.classList.remove("is-playing");
+            }
+          }
+
+          cards.forEach(function (card) {
+            videoEl(card).addEventListener("ended", function () {
+              card.classList.remove("is-playing");
+            });
+            card.addEventListener("keydown", function (e) {
+              var i = parseInt(card.getAttribute("data-index"), 10);
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                if (i === active) togglePlay(card);
+                else goTo(i);
+              }
+              if (e.key === "ArrowLeft") goTo(active - 1);
+              if (e.key === "ArrowRight") goTo(active + 1);
+            });
+          });
+
+          section.addEventListener("click", function (e) {
+            if (e.target.closest(".vv-nav")) return;
+            var card = e.target.closest(".vv-card");
+            if (!card) return;
+            if (moved) {
+              moved = false;
+              return;
+            }
+            var i = parseInt(card.getAttribute("data-index"), 10);
+            if (i === active) togglePlay(card);
+            else goTo(i);
+          });
+
+          prevBtn.addEventListener("click", function () {
+            goTo(active - 1);
+          });
+          nextBtn.addEventListener("click", function () {
+            goTo(active + 1);
+          });
+
+          viewport.addEventListener("pointerdown", function (e) {
+            startX = e.clientX;
+            startY = e.clientY;
+            moved = false;
+            dragging = false;
+            viewport.setPointerCapture(e.pointerId);
+          });
+
+          viewport.addEventListener("pointermove", function (e) {
+            var dx = e.clientX - startX;
+            var dy = e.clientY - startY;
+            if (!dragging && Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) {
+              dragging = true;
+              viewport.classList.add("dragging");
+              track.style.transition = "none";
+              baseOffset = offsetFor(active);
+            }
+            if (dragging) {
+              e.preventDefault();
+              track.style.setProperty("--vv-offset", baseOffset + dx + "px");
+            }
+          });
+
+          function endDrag(e) {
+            if (!dragging) return;
+            var dx = e.clientX - startX;
+            viewport.classList.remove("dragging");
+            track.style.transition = "";
+            dragging = false;
+            moved = Math.abs(dx) > 10;
+            var threshold = Math.min(90, cardWidth() * 0.2);
+            if (dx < -threshold) goTo(active + 1);
+            else if (dx > threshold) goTo(active - 1);
+            else layout();
+          }
+          viewport.addEventListener("pointerup", endDrag);
+          viewport.addEventListener("pointercancel", endDrag);
+
+          var resizeRaf;
+          window.addEventListener("resize", function () {
+            cancelAnimationFrame(resizeRaf);
+            resizeRaf = requestAnimationFrame(layout);
+          });
+
+          gap = parseFloat(getComputedStyle(track).gap) || 24;
+          layout();
+          loadNearby();
+        })();
 
         onScroll();
         setActiveLink();
